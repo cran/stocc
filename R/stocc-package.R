@@ -1,3 +1,24 @@
+#' R package for fitting spatial-temporal occupancy models via Gibbs sampling
+#' 
+#' This package contains functions that fit a spatial occupancy model where the
+#' true occupancy is a function of a spatial process.  An efficient Gibbs
+#' sampling algorithm is used by formulating the detection and occupancy
+#' process models with a probit model instead of the traditional logit based
+#' model.
+#' 
+#' \tabular{ll}{ Package: \tab stocc\cr Type: \tab Package\cr Version: \tab
+#' 1.23\cr Date: \tab 7-29-2014\cr License: \tab Unlimited\cr LazyLoad: \tab
+#' yes\cr }
+#' 
+#' @name stocc-package
+#' @aliases stocc-package stocc
+#' @docType package
+#' @author Devin S. Johnson
+#' 
+#' Maintainer: Devin S. Johnson <devin.johnson@@noaa.gov>
+#' 
+#' 
+NULL
 
 
 #' A simulated data set of environmental covariates
@@ -48,10 +69,14 @@ NULL
 #' @name occupancyData
 #' @docType data
 #' @format A data frame with 1600 observations on the following 5 variables.
-#' \describe{ \item{site}{Site labels} \item{x}{Longitude
-#' coordinate} \item{y}{Latitude coordinate} \item{psi}{True
-#' probability of occupancy} \item{psi.fix}{The fixed effects portion of the occupancy process map}
-#' \item{occ}{True realized occupancy} }
+#' \describe{ 
+#' \item{site}{Site labels} 
+#' \item{x}{Longitude coordinate} 
+#' \item{y}{Latitude coordinate} 
+#' \item{psi}{True probability of occupancy} 
+#' \item{psi.fix}{The fixed effects portion of the occupancy process map}
+#' \item{occ}{True realized occupancy} 
+#' }
 #' @examples
 #' 
 #' data(occupancyData)
@@ -60,35 +85,11 @@ NULL
 #' ##
 #' image(x=seq(0.5,39.5,1), y=seq(0.5,39.5,1), z=t(matrix(occupancyData$psi,40)), 
 #' 	xlab="x", ylab="y", main="Occupancy process with realized occupancy")
-#' points(occupancyData$x[occupancyData$occ==1], occupancyData$y[occupancyData$occ==1], pch=20, cex=0.25, col="blue")
+#' points(occupancyData$x[occupancyData$occ==1], occupancyData$y[occupancyData$occ==1], 
+#'  pch=20, cex=0.25, col="blue")
 #' 
 NULL
 
-
-
-
-
-#' R package for fitting spatial-temporal occupancy models via Gibbs sampling
-#' 
-#' This package contains functions that fit a spatial occupancy model where the
-#' true occupancy is a function of a spatial process.  An efficient Gibbs
-#' sampling algorithm is used by formulating the detection and occupancy
-#' process models with a probit model instead of the traditional logit based
-#' model.
-#' 
-#' \tabular{ll}{ Package: \tab stocc\cr Type: \tab Package\cr Version: \tab
-#' 1.0-7\cr Date: \tab 2012-11-26\cr License: \tab Unlimited\cr LazyLoad: \tab
-#' yes\cr }
-#' 
-#' @name stocc-package
-#' @aliases stocc-package stocc
-#' @docType package
-#' @author Devin S. Johnson
-#' 
-#' Maintainer: Devin S. Johnson <devin.johnson@@noaa.gov>
-#' 
-#' 
-NULL
 
 
 #' Simulated occupancy survey data
@@ -100,7 +101,7 @@ NULL
 #' continuous one (cov1) and a factor (cov2). These are NOT the same as the
 #' cov1 and cov2 of the habData data frame. The coefficients used were
 #' \code{beta = c(1, 0, 0.5, 1, 0)}. Thus detection given occupancy of site i
-#' at time j = \code{pnorm(0, X%*%beta, lower=FALSE)}.
+#' at time j = \code{pnorm(0,X\%*\%beta,lower=FALSE)}.
 #' 
 #' 
 #' @name visitData
@@ -127,38 +128,21 @@ NULL
 
 
 
-.onLoad <- function(libname, pkgname)
+.onAttach <- function(library, pkgname)
 {
-  ## Return a list, each element of which is a vector
-  ## the first element of the vector is the stuff before the colon in info[[1]]
-  ## the second element is the stuff after the colon (can get > 2 elements some
-  ## times but ignore)
-  info <- strsplit(library(help=pkgname, character.only=TRUE, lib.loc=libname)$info[[1]], "\\:[ ]+")
-  ## Go through the list, pulling out the Package, Version and Built strings
-  l <- length(info)
-  package <- version <- built <- ""
-  for (i in 1:l) {
-    if(info[[i]][1] == "Package") package <- info[[i]][2]
-    if(info[[i]][1] == "Version") version <- info[[i]][2]
-    if(info[[i]][1] == "Built") built <- info[[i]][2]
-  }
-  ## Print these out
-  
-  packageStartupMessage(paste("\nThis is", package, version, "\nBuilt:", built, "\n\n"),
-                        "Type \"?stocc\" for a description\n\n", 
-                        "Type 'demo(simDataMCMC)' for a model fitting example.\n",
-                        "Be CAREFUL! The demo runs a full MCMC that can take a while\n", 
-                        paste(c("The source for the demo can be obtained on your machine at ", "'", system.file("demo/simDataMCMC.R", package = "stocc"), "'"), collapse="")
-                        )
-  ## uncomment for fortran/c code
-  ## library.dynam("filenameForDll", pkgname)
+  info <-utils::packageDescription(pkgname)
+  package <- info$Package
+  version <- info$Version
+  date <- info$Date
+  packageStartupMessage(
+    paste(paste(package, version, paste("(",date, ")", sep=""), "\n"), 
+          "Type 'demo(package='stocc')' to see a list of demos for this package.\n",
+          "BE CAREFUL! The MCMC code can take a while to run if you start the demo.\n",
+          "The raw code for the demos can be found by typing 'system.file('demo', package='stocc')'")
+                      )
+
 }
 
-.onUnload <- function(libpath)
-{
-  cat("\nBye-Bye from spatialOccupancy\n\n")
-  return(invisible())
-}
 
 ###
 ### Some Misc. functions for the future...
